@@ -14,58 +14,58 @@ cd heroku-database-backups
 Create a project on heroku.
 
 ```
-heroku create my-database-backups
+heroku create mc-ops-database-backups
 ```
 Add the heroku-buildpack-cli:
 
 ```
-heroku buildpacks:add https://github.com/heroku/heroku-buildpack-cli -a  my-database-backups
+heroku buildpacks:add https://github.com/heroku/heroku-buildpack-cli -a  mc-ops-database-backups
 ```
 
 Next push this project to your heroku projects git repository.
 
 ```
-heroku git:remote -a my-database-backups
+heroku git:remote -a mc-ops-database-backups
 git push heroku master
 ```
 
 Now we need to set some environment variables in order to get the heroku cli working properly using the [heroku-buildpack-cli](https://github.com/heroku/heroku-buildpack-cli).
 
 ```
-heroku config:add HEROKU_API_KEY=`heroku auth:token` -a my-database-backups
+heroku config:add HEROKU_API_KEY=`heroku auth:token` -a mc-ops-database-backups
 ```
 
 This creates a token that will quietly expire in one year. To create a long-lived authorization token instead, do this:
 
 ```
-heroku config:add HEROKU_API_KEY=`heroku authorizations:create -S -d my-database-backups` -a my-database-backups
+heroku config:add HEROKU_API_KEY=`heroku authorizations:create -S -d mc-ops-database-backups` -a mc-ops-database-backups
 ```
 
 Next we need to add the amazon key and secret from the IAM user that you are using:
 
 ```
-heroku config:add AWS_ACCESS_KEY_ID=123456 -a my-database-backups
-heroku config:add AWS_DEFAULT_REGION=us-east-1 -a my-database-backups
-heroku config:add AWS_SECRET_ACCESS_KEY=132345verybigsecret -a my-database-backups
+heroku config:add AWS_ACCESS_KEY_ID=123456 -a mc-ops-database-backups
+heroku config:add AWS_DEFAULT_REGION=us-east-1 -a mc-ops-database-backups
+heroku config:add AWS_SECRET_ACCESS_KEY=132345verybigsecret -a mc-ops-database-backups
 ```
 
 And we'll need to also set the bucket and path where we would like to store our database backups:
 
 ```
-heroku config:add S3_BUCKET_PATH=my-db-backup-bucket/backups -a my-database-backups
+heroku config:add S3_BUCKET_PATH=my-db-backup-bucket/backups -a mc-ops-database-backups
 ```  
 Be careful when setting the S3_BUCKET_PATH to leave off a trailing forward slash.  Amazon console s3 browser will not be able to locate your file if your directory has "//" (S3 does not really have directories.).
 
 Finally, we need to add heroku scheduler and call [backup.sh](https://github.com/kbaum/heroku-database-backups/blob/master/bin/backup.sh) on a regular interval with the appropriate database and app.
 
 ```
-heroku addons:create scheduler -a my-database-backups
+heroku addons:create scheduler -a mc-ops-database-backups
 ```
 
 Now open it up, in your browser with:
 
 ```
-heroku addons:open scheduler -a my-database-backups
+heroku addons:open scheduler -a mc-ops-database-backups
 ```
 
 And add the following command to run as often as you like:
