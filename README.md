@@ -41,7 +41,7 @@ This creates a token that will quietly expire in one year. To create a long-live
 heroku config:add HEROKU_API_KEY=`heroku authorizations:create -S -d mc-ops-database-backups` -a mc-ops-database-backups
 ```
 
-Next we need to add the amazon key and secret from the IAM user that you are using:
+Next we need to add the amazon key and secret from the IAM user that you are using (these are examples only; you will need to substitute the appropriate values for the specific IAM user with permissions to access the S3 bucket):
 
 ```
 heroku config:add AWS_ACCESS_KEY_ID=123456 -a mc-ops-database-backups
@@ -49,10 +49,10 @@ heroku config:add AWS_DEFAULT_REGION=us-east-1 -a mc-ops-database-backups
 heroku config:add AWS_SECRET_ACCESS_KEY=132345verybigsecret -a mc-ops-database-backups
 ```
 
-And we'll need to also set the bucket and path where we would like to store our database backups:
+And we'll need to also set the bucket and path where we would like to store our database backups (example):
 
 ```
-heroku config:add S3_BUCKET_PATH=my-db-backup-bucket/backups -a mc-ops-database-backups
+heroku config:add S3_BUCKET_PATH=ops-db-prod-backups/backups/daily -a mc-ops-database-backups
 ```  
 Be careful when setting the S3_BUCKET_PATH to leave off a trailing forward slash.  Amazon console s3 browser will not be able to locate your file if your directory has "//" (S3 does not really have directories.).
 
@@ -74,6 +74,6 @@ And add the following command to run as often as you like:
 APP=your-app DATABASE=HEROKU_POSTGRESQL_NAVY_URL /app/bin/backup.sh
 ```
 
-In the above command, APP is the name of your app within heroku that contains the database.  DATABASE is the name of the database you would like to capture and backup.  In our setup, DATABASE actually points to a follower database to avoid any impact to our users.  Both of these environment variables can also be set within your heroku config rather than passing into the script invocation.
+In the above command, APP is the name of your app within heroku that contains the database.  DATABASE is the name of the database you would like to capture and backup.  In our setup, DATABASE actually points to a follower database to avoid any impact to our users.  Either of these environment variables can also be set within your heroku config rather than passing into the script invocation.
 
 
